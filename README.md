@@ -1,4 +1,372 @@
-# SimplePHP框架
+# SimplePHP Framework | SimplePHP框架
+
+[English](#simplephp-framework) | [中文](#simplephp框架-1)
+
+## SimplePHP Framework
+
+A lightweight, secure, high-performance PHP framework.
+
+## 📋 Table of Contents
+
+- [Introduction](#introduction)
+- [Features](#features)
+- [Installation](#installation)
+- [Basic Usage](#basic-usage)
+  - [Routing](#routing)
+  - [Controllers](#controllers)
+  - [Models](#models)
+  - [Views](#views)
+- [Advanced Features](#advanced-features)
+  - [Caching System](#caching-system)
+  - [Security Features](#security-features)
+  - [API Development](#api-development)
+  - [SPA Support](#spa-support)
+- [Performance Optimization](#performance-optimization)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Introduction
+
+SimplePHP is a lightweight PHP framework focused on security and performance. It provides a clean and powerful MVC architecture while introducing modern features such as caching systems, frontend resource optimization, and security measures, allowing developers to quickly build high-quality web applications.
+
+## Features
+
+- **Lightweight Architecture**: Small core files, fast loading speed
+- **MVC Design Pattern**: Clear code organization structure
+- **Security Mechanisms**:
+  - CSRF protection
+  - XSS defense
+  - SQL injection protection
+  - CSP policies
+  - Secure view path handling
+- **High Performance**:
+  - Page caching system
+  - Data caching
+  - Frontend resource optimization
+  - HTTP cache control
+- **Modern Functionalities**:
+  - RESTful API support
+  - SPA application routing
+  - Resource routing
+  - Frontend resource lazy loading
+- **Developer Friendly**:
+  - Clean syntax
+  - Detailed documentation
+  - Friendly error messages
+
+## Installation
+
+### System Requirements
+
+- PHP 7.4 or higher
+- MySQL 5.7 or higher
+- Enabled PHP extensions: PDO, JSON, mbstring, fileinfo
+
+### Installation Steps
+
+1. Install via Composer (recommended)
+
+```bash
+composer create-project simplephp/framework my-project
+cd my-project
+```
+
+2. Configure Environment
+
+Copy the `.env.example` file to `.env` and configure it according to your environment:
+
+```bash
+cp .env.example .env
+```
+
+Edit the `.env` file to set database connection and other information.
+
+3. Set Permissions
+
+```bash
+chmod -R 755 public/
+chmod -R 755 storage/
+```
+
+4. Start Development Server
+
+```bash
+php -S localhost:8000 -t public/
+```
+
+Now you can visit `http://localhost:8000` in your browser to view your application.
+
+## Basic Usage
+
+### Routing
+
+Route configuration is located in the `config/routes.php` file, using a concise syntax:
+
+```php
+// Basic routes
+$router->get('/', 'HomeController@index');
+$router->post('/contact', 'ContactController@submit');
+
+// Parameterized routes
+$router->get('/user/{id}', 'UserController@show');
+
+// Route groups
+$router->group('/admin', function($router) {
+    $router->get('/dashboard', 'AdminController@dashboard');
+    $router->get('/users', 'AdminController@users');
+});
+
+// API routes
+$router->api('/api/v1', function($router) {
+    $router->resource('users', 'Api\UserController');
+    $router->get('stats', 'Api\StatsController@index');
+});
+
+// SPA application routes
+$router->spa('/admin/{path?}', 'AdminController@index');
+```
+
+### Controllers
+
+Controllers are located in the `app/controllers` directory, example:
+
+```php
+<?php
+namespace App\Controllers;
+
+use SimplePHP\Core\Controller;
+
+class HomeController extends Controller
+{
+    public function index()
+    {
+        $data = [
+            'title' => 'Home',
+            'message' => 'Welcome to SimplePHP'
+        ];
+        
+        return $this->view('home/index', $data);
+    }
+}
+```
+
+### Models
+
+Models are located in the `app/models` directory, providing concise ORM functionality:
+
+```php
+<?php
+namespace App\Models;
+
+use SimplePHP\Core\Model;
+
+class User extends Model
+{
+    // Table name, defaults to lowercase plural form of class name
+    protected $table = 'users';
+    
+    // Primary key
+    protected $primaryKey = 'id';
+    
+    // Mass assignable fields
+    protected $fillable = ['name', 'email', 'password'];
+    
+    // Custom methods
+    public function posts()
+    {
+        return $this->hasMany('App\Models\Post');
+    }
+    
+    // Get active users
+    public static function getActive()
+    {
+        return self::where('active', 1)->get();
+    }
+}
+```
+
+### Views
+
+View files are located in the `app/views` directory, using pure PHP syntax:
+
+```php
+<!-- app/views/home/index.php -->
+<div class="jumbotron">
+    <h1><?= htmlspecialchars($title) ?></h1>
+    <p class="lead"><?= htmlspecialchars($message) ?></p>
+    <hr class="my-4">
+    <p>Start building your web application with SimplePHP framework</p>
+    <a class="btn btn-primary btn-lg" href="<?= url('guide') ?>" role="button">View Documentation</a>
+</div>
+```
+
+Layout file usage:
+
+```php
+// In controller
+public function about()
+{
+    $data = ['title' => 'About Us'];
+    return $this->view('about', $data, 'layouts/main');
+}
+```
+
+## Advanced Features
+
+### Caching System
+
+SimplePHP provides a powerful caching mechanism, supporting file, Redis, and Memcached drivers:
+
+```php
+// Configuration in config/cache.php
+// Usage example:
+use SimplePHP\Core\Cache;
+
+// Store data
+Cache::set('key', 'value', 3600); // Cache for 1 hour
+
+// Retrieve data
+$value = Cache::get('key');
+
+// Check if exists
+if (Cache::has('key')) {
+    // Logic
+}
+
+// Delete cache
+Cache::delete('key');
+
+// Clear all cache
+Cache::flush();
+```
+
+### Security Features
+
+The framework has built-in security mechanisms:
+
+```php
+// CSRF protection
+// Add CSRF token in forms:
+<form method="POST" action="<?= url('contact') ?>">
+    <input type="hidden" name="_csrf" value="<?= csrf_token() ?>">
+    <!-- Form content -->
+</form>
+
+// XSS protection
+// Safely output user data
+<?= htmlspecialchars($userInput) ?>
+
+// SQL injection protection
+// Use parameterized queries (automatically handled in Model)
+$users = User::where('status', $status)->get();
+```
+
+### API Development
+
+SimplePHP provides convenient features for API development:
+
+```php
+// In controller
+public function index()
+{
+    $users = User::all();
+    return $this->json($users);
+}
+
+// Custom status code and headers
+public function store(Request $request)
+{
+    $user = User::create($request->all());
+    return $this->json($user, 201, [
+        'X-Created-At' => time()
+    ]);
+}
+```
+
+API resource routing:
+
+```php
+// In routes.php
+$router->resource('users', 'Api\UserController');
+
+// Generates the following routes:
+// GET /users
+// GET /users/{id}
+// POST /users
+// PUT /users/{id}
+// DELETE /users/{id}
+```
+
+### SPA Support
+
+SimplePHP supports single-page application development:
+
+```php
+// In routes.php
+$router->spa('/admin/{path?}', 'AdminController@index');
+
+// In controller
+public function index()
+{
+    return $this->view('admin/app');
+}
+```
+
+## Performance Optimization
+
+The framework provides various performance optimization mechanisms:
+
+1. **HTTP Cache Control**
+
+```php
+// In controller
+public function show($id)
+{
+    $article = Article::find($id);
+    return $this->view('articles/show', [
+        'article' => $article
+    ])->withCache(3600); // Cache for 1 hour
+}
+```
+
+2. **Frontend Resource Optimization**
+
+```php
+// In view
+<link rel="stylesheet" href="<?= asset('css/app.css') ?>">
+<script src="<?= asset('js/app.js') ?>" defer></script>
+```
+
+3. **Critical CSS Inline**
+
+```php
+// In layout
+<style><?= include_once(ROOT_PATH . '/public/css/critical.css') ?></style>
+```
+
+4. **Image Lazy Loading**
+
+```html
+<img data-src="/images/example.jpg" class="lazy-load" alt="Example">
+```
+
+## Contributing
+
+We welcome contributions of any form, including issue reports, feature requests, and code submissions:
+
+1. Fork the project
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Create a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+---
+
+## SimplePHP框架
 
 一个轻量级、高安全性、高性能的PHP框架。
 

@@ -1,0 +1,92 @@
+/* 文档页面关键CSS */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f8f9fa;
+}
+
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 280px;
+  background-color: #f1f5f9;
+  border-right: 1px solid #e2e8f0;
+  padding: 1.5rem;
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  margin-bottom: 1.5rem;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #2d3748;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.content {
+  flex: 1;
+  padding: 2rem;
+  margin-left: 280px;
+}
+
+.doc-header {
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 1rem;
+}
+
+.doc-title {
+  font-size: 2.25rem;
+  font-weight: bold;
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+}
+
+.doc-meta {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+/* 导航菜单 */
+.nav-menu {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-item {
+  margin-bottom: 0.25rem;
+}
+
+.nav-link {
+  display: block;
+  padding: 0.5rem 0;
+  color: #4a5568;
+  text-decoration: none;
+  transition: color 0.2s;
+  border-radius: 4px;
+}
+
+.nav-link:hover {
+  color: #3182ce;
+  background-color: rgba(49, 130, 206, 0.05);
+}
+
+.nav-link.active {
+  color: #3182ce;
+  font-weight: 600;
+  background-color: rgba(49, 130, 206, 0.1);
+} 

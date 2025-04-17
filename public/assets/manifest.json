@@ -1,0 +1,9 @@
+{
+  "app.js": "app.js",
+  "app.css": "app.css",
+  "admin.js": "admin.js",
+  "admin.css": "admin.css",
+  "api.js": "api.js",
+  "components.js": "components.js",
+  "vendor.js": "vendor.js"
+} 
